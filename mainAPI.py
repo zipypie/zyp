@@ -15,7 +15,9 @@ mysql = MySQL(app)
 @app.route("/")
 def hello_world():
     return "<p>Hello World</p>"
-
+  
+  
+#GET method for customer
 @app.route("/customers", methods=["GET"])
 def get_customers():
     format = request.args.get("format", "").lower()
@@ -80,7 +82,37 @@ def get_atm():
         # Return the JSON response
         return make_response(jsonify(data), 200)
       
-      
+@app.route("/phone", methods=["GET"])
+def get_phone():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM phone
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("phone")
+        for row in data:
+            phone = ET.SubElement(root, "phone")
+            for key, value in row.items():
+                field = ET.SubElement(phone, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
       
 
 if __name__ == "__main__":
