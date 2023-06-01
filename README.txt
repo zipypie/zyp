@@ -72,6 +72,7 @@ After Chocolatey is installed, run the following command to install Neovim:
 
 
 choco install neovim
+
 Chocolatey will download and install Neovim along with its dependencies. Follow the prompts during the installation process.
 
 Once the installation is complete, you can launch Neovim by opening a new PowerShell or Command Prompt window and typing nvim.
