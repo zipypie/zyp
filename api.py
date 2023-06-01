@@ -15,198 +15,60 @@ mysql = MySQL(app)
 @app.route("/")
 def hello_world():
     return "<p>Hello World</p>"
-#GET method for customer
+
+def fetch_data_from_table(table_name):
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = f"SELECT * FROM {table_name}"
+    cur.execute(query)
+    columns = [desc[0] for desc in cur.description]  # Get column names
+    data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element(table_name)
+        for row in data:
+            element = ET.SubElement(root, table_name[:-1])  # Remove 's' from table_name for tag name
+            for key, value in row.items():
+                field = ET.SubElement(element, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+
 @app.route("/customers", methods=["GET"])
 def get_customers():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM customer
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
+    return fetch_data_from_table("customer")
 
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("customers")
-        for row in data:
-            customer = ET.SubElement(root, "customer")
-            for key, value in row.items():
-                field = ET.SubElement(customer, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)
-      
 @app.route("/atm", methods=["GET"])
 def get_atm():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM atm
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
+    return fetch_data_from_table("atm")
 
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("atm")
-        for row in data:
-            atm = ET.SubElement(root, "atm")
-            for key, value in row.items():
-                field = ET.SubElement(atm, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)
-      
 @app.route("/phone", methods=["GET"])
 def get_phone():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM phone
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("phone")
-        for row in data:
-            phone = ET.SubElement(root, "phone")
-            for key, value in row.items():
-                field = ET.SubElement(phone, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)
+    return fetch_data_from_table("phone")
 
 @app.route("/products", methods=["GET"])
 def get_products():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM products
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("products")
-        for row in data:
-            products = ET.SubElement(root, "products")
-            for key, value in row.items():
-                field = ET.SubElement(products, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)      
+    return fetch_data_from_table("products")
 
 @app.route("/product_price", methods=["GET"])
 def get_product_price():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM product_price
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("product_price")
-        for row in data:
-            product_price = ET.SubElement(root, "product_price")
-            for key, value in row.items():
-                field = ET.SubElement(product_price, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)
+    return fetch_data_from_table("product_price")
 
 @app.route("/payments", methods=["GET"])
 def get_payments():
-    format = request.args.get("format", "").lower()
-    cur = mysql.connection.cursor()
-    query = """
-    SELECT * FROM payments
-    """
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-
-    if format == "xml":
-        # Convert data to XML format
-        root = ET.Element("payments")
-        for row in data:
-            payments = ET.SubElement(root, "payments")
-            for key, value in row.items():
-                field = ET.SubElement(payments, key)
-                field.text = str(value)
-
-        # Convert XML to string
-        xml_data = ET.tostring(root, encoding="utf-8")
-
-        # Set the Content-Type header to indicate XML format
-        headers = {"Content-Type": "application/xml"}
-
-        # Return the XML response
-        return make_response(xml_data, 200, headers)
-    else:
-        # Return the JSON response
-        return make_response(jsonify(data), 200)
+    return fetch_data_from_table("payments")
 
 if __name__ == "__main__":
     app.run(debug=True)
