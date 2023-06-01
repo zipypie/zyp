@@ -113,7 +113,38 @@ def get_phone():
     else:
         # Return the JSON response
         return make_response(jsonify(data), 200)
-      
+
+@app.route("/products", methods=["GET"])
+def get_products():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM products
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("products")
+        for row in data:
+            products = ET.SubElement(root, "products")
+            for key, value in row.items():
+                field = ET.SubElement(products, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)      
 
 if __name__ == "__main__":
     app.run(debug=True)
