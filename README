@@ -35,3 +35,20 @@ This command will install Flask and its dependencies.
 Once the installation is complete, you can start building Flask applications.
 
 
+
+#TO INSTALL NeoVim
+Open PowerShell or Command Prompt as an administrator.
+
+If you don't have Chocolatey installed, run the following command to install Chocolatey:
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+
+After Chocolatey is installed, run the following command to install Neovim:
+
+
+choco install neovim
+Chocolatey will download and install Neovim along with its dependencies. Follow the prompts during the installation process.
+
+Once the installation is complete, you can launch Neovim by opening a new PowerShell or Command Prompt window and typing nvim.
+
