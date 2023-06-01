@@ -12,7 +12,9 @@ app.config["MYSQL_CURSOSCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
-
+@app.route("/")
+def hello_world():
+    return "<p>Hello World</p>"
 
 if __name__ == "__main__":
     app.run(debug=True)
