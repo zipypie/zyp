@@ -146,5 +146,37 @@ def get_products():
         # Return the JSON response
         return make_response(jsonify(data), 200)      
 
+@app.route("/product_price", methods=["GET"])
+def get_product_price():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM product_price
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("product_price")
+        for row in data:
+            product_price = ET.SubElement(root, "product_price")
+            for key, value in row.items():
+                field = ET.SubElement(product_price, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+      
 if __name__ == "__main__":
     app.run(debug=True)
