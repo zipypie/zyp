@@ -15,6 +15,198 @@ mysql = MySQL(app)
 @app.route("/")
 def hello_world():
     return "<p>Hello World</p>"
+#GET method for customer
+@app.route("/customers", methods=["GET"])
+def get_customers():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM customer
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("customers")
+        for row in data:
+            customer = ET.SubElement(root, "customer")
+            for key, value in row.items():
+                field = ET.SubElement(customer, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+      
+@app.route("/atm", methods=["GET"])
+def get_atm():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM atm
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("atm")
+        for row in data:
+            atm = ET.SubElement(root, "atm")
+            for key, value in row.items():
+                field = ET.SubElement(atm, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+      
+@app.route("/phone", methods=["GET"])
+def get_phone():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM phone
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("phone")
+        for row in data:
+            phone = ET.SubElement(root, "phone")
+            for key, value in row.items():
+                field = ET.SubElement(phone, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+
+@app.route("/products", methods=["GET"])
+def get_products():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM products
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("products")
+        for row in data:
+            products = ET.SubElement(root, "products")
+            for key, value in row.items():
+                field = ET.SubElement(products, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)      
+
+@app.route("/product_price", methods=["GET"])
+def get_product_price():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM product_price
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("product_price")
+        for row in data:
+            product_price = ET.SubElement(root, "product_price")
+            for key, value in row.items():
+                field = ET.SubElement(product_price, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+
+@app.route("/payments", methods=["GET"])
+def get_payments():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM payments
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("payments")
+        for row in data:
+            payments = ET.SubElement(root, "payments")
+            for key, value in row.items():
+                field = ET.SubElement(payments, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
 
 if __name__ == "__main__":
     app.run(debug=True)
