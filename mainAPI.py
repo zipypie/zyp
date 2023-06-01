@@ -47,6 +47,41 @@ def get_customers():
     else:
         # Return the JSON response
         return make_response(jsonify(data), 200)
+      
+@app.route("/atm", methods=["GET"])
+def get_atm():
+    format = request.args.get("format", "").lower()
+    cur = mysql.connection.cursor()
+    query = """
+    SELECT * FROM atm
+    """
+    cur.execute(query)
+    data = cur.fetchall()
+    cur.close()
+
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("atm")
+        for row in data:
+            atm = ET.SubElement(root, "atm")
+            for key, value in row.items():
+                field = ET.SubElement(atm, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+      
+      
+      
 
 if __name__ == "__main__":
     app.run(debug=True)
