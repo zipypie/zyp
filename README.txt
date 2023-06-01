@@ -1,5 +1,6 @@
 
 
+
 #TO INSTALL FLASK
 
 Make sure you have Python installed on your system. You can check by opening a terminal or command prompt and running the following command:
@@ -36,41 +37,3 @@ Once the installation is complete, you can start building Flask applications.
 
 
 
-#TO INSTALL NeoVim
-Open PowerShell or Command Prompt as an administrator.
-
-If you don't have Chocolatey installed, run the following command to install Chocolatey:
-
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-
-After Chocolatey is installed, run the following command to install Neovim:
-
-
-choco install neovim
-Chocolatey will download and install Neovim along with its dependencies. Follow the prompts during the installation process.
-
-Once the installation is complete, you can launch Neovim by opening a new PowerShell or Command Prompt window and typing nvim.
-
-
-
-
-#TO INSTALL FLASK-MYSQLDB
-Install MySQL Server:
-
-Download and install MySQL Server from the official website: https://dev.mysql.com/downloads/mysql/
-Follow the installation instructions for your operating system.
-Install the Flask-MySQLdb package:
-
-Open a command prompt or terminal.
-Run the following command to install Flask-MySQLdb:
-pip install flask-mysqldb
-Set up the MySQL connection in Flask:
-
-Open your Flask application code.
-
-Import the necessary modules:
-
-python
-from flask import Flask
-from flask_mysqldb import MySQL
