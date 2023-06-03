@@ -23,6 +23,7 @@ def fetch_data_from_table(table_name, primary_key=None):
     if primary_key is None:
         query = f"SELECT * FROM {table_name}"
         cur.execute(query)
+        
     else:
         key_column = f"{table_name}_id"  # Get the custom key column name based on table_name
         query = f"SELECT * FROM {table_name} WHERE {key_column} = %s"
@@ -53,27 +54,63 @@ def fetch_data_from_table(table_name, primary_key=None):
         # Return the JSON response
         return make_response(jsonify(data), 200)
 
-@app.route("/customers/<customer_id>", methods=["GET"])
-def get_customers(customer_id):
+
+@app.route("/customers", methods=["GET"])
+def get_all_customers():
+    return fetch_data_from_table("customer")
+
+
+@app.route("/customers/<int:customer_id>", methods=["GET"])
+def get_customer(customer_id):
     return fetch_data_from_table("customer", customer_id)
 
-@app.route("/atm/<atm_id>", methods=["GET"])
+
+@app.route("/atms", methods=["GET"])
+def get_all_atms():
+    return fetch_data_from_table("atm")
+
+
+@app.route("/atms/<int:atm_id>", methods=["GET"])
 def get_atm(atm_id):
     return fetch_data_from_table("atm", atm_id)
 
-@app.route("/phone/<phone_id>", methods=["GET"])
+
+@app.route("/phones", methods=["GET"])
+def get_all_phones():
+    return fetch_data_from_table("phone")
+
+
+@app.route("/phones/<int:phone_id>", methods=["GET"])
 def get_phone(phone_id):
     return fetch_data_from_table("phone", phone_id)
 
-@app.route("/products/<product_id>", methods=["GET"])
-def get_products(product_id):
+
+@app.route("/products", methods=["GET"])
+def get_all_products():
+    return fetch_data_from_table("product")
+
+
+@app.route("/products/<int:product_id>", methods=["GET"])
+def get_product(product_id):
     return fetch_data_from_table("product", product_id)
 
-@app.route("/product_prices/<product_price_id>", methods=["GET"])
+
+@app.route("/product_prices", methods=["GET"])
+def get_all_product_prices():
+    return fetch_data_from_table("product_price")
+
+
+@app.route("/product_prices/<int:product_price_id>", methods=["GET"])
 def get_product_price(product_price_id):
     return fetch_data_from_table("product_price", product_price_id)
 
-@app.route("/payments/<payment_id>", methods=["GET"])
+
+@app.route("/payments", methods=["GET"])
+def get_all_payments():
+    return fetch_data_from_table("payment")
+
+
+@app.route("/payments/<int:payment_id>", methods=["GET"])
 def get_payment(payment_id):
     return fetch_data_from_table("payment", payment_id)
 
