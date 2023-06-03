@@ -16,11 +16,18 @@ mysql = MySQL(app)
 def hello_world():
     return "<p>Hello World</p>"
 
-def fetch_data_from_table(table_name):
+def fetch_data_from_table(table_name, primary_key=None):
     format = request.args.get("format", "").lower()
     cur = mysql.connection.cursor()
-    query = f"SELECT * FROM {table_name}"
-    cur.execute(query)
+
+    if primary_key is None:
+        query = f"SELECT * FROM {table_name}"
+        cur.execute(query)
+    else:
+        key_column = f"{table_name}_id"  # Get the custom key column name based on table_name
+        query = f"SELECT * FROM {table_name} WHERE {key_column} = %s"
+        cur.execute(query, (primary_key,))  # Pass primary key as a tuple
+
     columns = [desc[0] for desc in cur.description]  # Get column names
     data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
     cur.close()
@@ -46,29 +53,29 @@ def fetch_data_from_table(table_name):
         # Return the JSON response
         return make_response(jsonify(data), 200)
 
-@app.route("/customers", methods=["GET"])
-def get_customers():
-    return fetch_data_from_table("customer")
+@app.route("/customers/<customer_id>", methods=["GET"])
+def get_customers(customer_id):
+    return fetch_data_from_table("customer", customer_id)
 
-@app.route("/atm", methods=["GET"])
-def get_atm():
-    return fetch_data_from_table("atm")
+@app.route("/atm/<atm_id>", methods=["GET"])
+def get_atm(atm_id):
+    return fetch_data_from_table("atm", atm_id)
 
-@app.route("/phone", methods=["GET"])
-def get_phone():
-    return fetch_data_from_table("phone")
+@app.route("/phone/<phone_id>", methods=["GET"])
+def get_phone(phone_id):
+    return fetch_data_from_table("phone", phone_id)
 
-@app.route("/products", methods=["GET"])
-def get_products():
-    return fetch_data_from_table("products")
+@app.route("/products/<product_id>", methods=["GET"])
+def get_products(product_id):
+    return fetch_data_from_table("product", product_id)
 
-@app.route("/product_price", methods=["GET"])
-def get_product_price():
-    return fetch_data_from_table("product_price")
+@app.route("/product_prices/<product_price_id>", methods=["GET"])
+def get_product_price(product_price_id):
+    return fetch_data_from_table("product_price", product_price_id)
 
-@app.route("/payments", methods=["GET"])
-def get_payments():
-    return fetch_data_from_table("payments")
+@app.route("/payments/<payment_id>", methods=["GET"])
+def get_payment(payment_id):
+    return fetch_data_from_table("payment", payment_id)
 
 if __name__ == "__main__":
     app.run(debug=True)
