@@ -114,5 +114,23 @@ def get_all_payments():
 def get_payment(payment_id):
     return fetch_data_from_table("payment", payment_id)
 
+@app.route("/customers", methods=["POST"])
+def add_customer():
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    first_name = info["first_name"]
+    last_name = info["last_name"]
+    customer_address = info["customer_address"]
+    cur.execute(
+        """INSERT INTO CUSTOMER(first_name, last_name, customer_address) 
+        VALUES (%s, %s, %s)""",
+        (first_name, last_name, customer_address),
+    )
+    mysql.connection.commit()
+    print("row(s) affected: {}".format(cur.rowcount))
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+
 if __name__ == "__main__":
     app.run(debug=True)
