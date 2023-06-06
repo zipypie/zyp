@@ -1,3 +1,39 @@
+Tools and application i've used in this project
+Visual Studio Codesoftware application
+MYSQL Workbench software application
+
+PROGRAMMING LANGUAGE
+python 
+structured query language/SQL
+git
+
+
+INSTALL TO USE MY PROJECT
+install python 
+install flask
+install erd editor extension on the vscode
+install git 
+install postman
+install xampp
+
+
+#Their USES
+Python: Python is a programming language that is widely used for web development, data analysis, artificial intelligence, and more. It's known for its simplicity and readability.
+
+Flask: Flask is a web framework for Python that makes it easy to build web applications. It provides tools and libraries to handle routing, request handling, and rendering templates, making web development more efficient.
+
+ERD Editor Extension (Visual Studio Code): This extension allows you to create Entity-Relationship Diagrams (ERDs) within Visual Studio Code. ERDs are visual representations of database tables and their relationships, helping you design and understand the structure of a database.
+
+Git: Git is a version control system that helps you manage and track changes to your code. It allows multiple developers to work on a project simultaneously, keeps track of different versions, and enables collaboration and code sharing.
+
+Postman: Postman is an API development and testing tool. It simplifies the process of working with APIs by providing a user-friendly interface to send requests, view responses, and test API functionality. It's commonly used by developers to interact with and debug APIs.
+
+XAMPP: XAMPP is a software package that includes a web server (Apache), a database server (MySQL), and a scripting language (PHP). It provides a local development environment for building and testing web applications before deploying them to a production server.
+
+
+
+
+
 
 
 #TO INSTALL FLASK
