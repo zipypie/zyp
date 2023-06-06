@@ -15,6 +15,10 @@ install erd editor extension on the vscode
 install git 
 install postman
 install xampp
+install flask-mysqldb-connector
+install flask-jwt-extended flask-principal
+install flask-httpauth
+
 
 
 #Their USES
