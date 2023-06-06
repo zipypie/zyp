@@ -243,7 +243,7 @@ def update_customers(customer_id):
     )
 
 
-@app.route("/new_atms", methods=["POST"])
+@app.route("/new_atms", methods=["PUT"])
 def add_new_atm():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -251,18 +251,16 @@ def add_new_atm():
     customer_id = info["customer_id"]
 
     cur.execute(
-        """INSERT INTO atm (atm_name, customer_id) 
-        VALUES (%s, %s)""",
+        """UPDATE atm SET atm_name = %s WHERE customer_id = %s""",
         (atm_number, customer_id),
     )
     mysql.connection.commit()
-    print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_phones", methods=["POST"])
+@app.route("/new_phones", methods=["PUT"])
 def add_new_phone():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -270,37 +268,33 @@ def add_new_phone():
     customer_id = info["customer_id"]
 
     cur.execute(
-        """INSERT INTO phone (smartphone_number, customer_id) 
-        VALUES (%s, %s)""",
+        """UPDATE phone SET smartphone_number = %s WHERE customer_id = %s""",
         (smartphone_number, customer_id),
     )
     mysql.connection.commit()
-    print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_products", methods=["POST"])
+@app.route("/new_products", methods=["PUT"])
 def add_new_product():
     cur = mysql.connection.cursor()
     info = request.get_json()
-    product_name = info["product_name"]
+    product_id = info["product_id"]
     product_quantity = info["product_quantity"]
 
     cur.execute(
-        """INSERT INTO product (product_name, product_quantity) 
-        VALUES (%s, %s)""",
-        (product_name, product_quantity),
+        """UPDATE product SET product_quantity = %s WHERE product_id = %s""",
+        (product_quantity, product_id),
     )
     mysql.connection.commit()
-    print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_product_prices", methods=["POST"])
+@app.route("/new_product_prices", methods=["PUT"])
 def add_new_product_price():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -308,15 +302,23 @@ def add_new_product_price():
     product_price = info["product_price"]
 
     cur.execute(
-        """INSERT INTO product_price (product_id, product_price) 
-        VALUES (%s, %s)""",
-        (product_id, product_price),
+        """UPDATE product_price SET product_price = %s WHERE product_id = %s""",
+        (product_price, product_id),
     )
     mysql.connection.commit()
-    print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
+
+
+@app.route("/customers/<int:customer_id>", methods=["DELETE"])
+def delete_customer(customer_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM customer WHERE customer_id = %s", (customer_id,))
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(jsonify({"message": "deleted successfully", "rows_affected": rows_affected}), 200)
 
 
 if __name__ == "__main__":
