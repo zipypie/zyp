@@ -108,3 +108,50 @@ Once the modules are running, you can access the XAMPP server by opening a web b
 but there are some needed to change on the file of the mysql where you need to delete some files inorder for us to use the xampp file
 
 
+
+
+
+
+
+
+
+
+
+#TO INSTALL CURL
+To install curl in PowerShell on Windows, you can follow these steps:
+
+Open PowerShell by typing "PowerShell" in the Windows search bar and selecting the "Windows PowerShell" or "PowerShell" app.
+
+To check if curl is already installed, run the following command:
+
+
+curl --version
+If curl is already installed, you will see the version information. If not, you will see an error indicating that the command is not recognized.
+
+To install curl in PowerShell, you can use the Invoke-WebRequest cmdlet to download the curl executable from the official curl website. Run the following command:
+
+
+Invoke-WebRequest -Uri https://curl.se/windows/dl-<version>/curl-<version>-win64-mingw.zip -OutFile curl.zip
+Replace <version> with the desired version number. For example, to download curl version 7.78.0, the command would be:
+
+
+Invoke-WebRequest -Uri https://curl.se/windows/dl-7.78.0/curl-7.78.0-win64-mingw.zip -OutFile curl.zip
+Once the download is complete, extract the contents of the zip file by running the following command:
+
+
+Expand-Archive -Path curl.zip -DestinationPath C:\Path\To\Extract
+Replace C:\Path\To\Extract with the desired directory where you want to extract curl.
+
+Add the directory containing the curl executable to the system's PATH environment variable. Run the following command:
+
+
+$env:Path += ";C:\Path\To\Extract"
+Replace C:\Path\To\Extract with the actual path where you extracted curl.
+
+Verify the installation by running the following command:
+
+
+curl --version
+You should now see the version information for curl.
+
+That's it! You have installed curl in PowerShell on Windows. You can now use the curl command to make HTTP requests directly from PowerShell.
