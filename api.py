@@ -1,8 +1,10 @@
 from flask import Flask, make_response, jsonify, request
 from flask_mysqldb import MySQL
 import xml.etree.ElementTree as ET
+from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -12,9 +14,23 @@ app.config["MYSQL_CURSOSCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
+@auth.verify_password
+def verify(username, password):
+    # Example hardcoded username and password for demonstration purposes
+    valid_username = "admin"
+    valid_password = "password123"
+
+    # Check if the provided username and password match the valid credentials
+    if username == valid_username and password == valid_password:
+        return True
+
+    return False
+
 @app.route("/")
+@auth.login_required
 def hello_world():
     return "<p>Hello World</p>"
+
 
 def fetch_data_from_table(table_name, primary_key=None):
     format = request.args.get("format", "").lower()
@@ -56,67 +72,80 @@ def fetch_data_from_table(table_name, primary_key=None):
 
 
 @app.route("/customers", methods=["GET"])
+@auth.login_required
 def get_all_customers():
     return fetch_data_from_table("customer")
 
 
 @app.route("/customers/<int:customer_id>", methods=["GET"])
+@auth.login_required
 def get_customer(customer_id):
     return fetch_data_from_table("customer", customer_id)
 
 
 @app.route("/atms", methods=["GET"])
+@auth.login_required
 def get_all_atms():
     return fetch_data_from_table("atm")
 
 
 @app.route("/atms/<int:atm_id>", methods=["GET"])
+@auth.login_required
 def get_atm(atm_id):
     return fetch_data_from_table("atm", atm_id)
 
 
 @app.route("/phones", methods=["GET"])
+@auth.login_required
 def get_all_phones():
     return fetch_data_from_table("phone")
 
 
 @app.route("/phones/<int:phone_id>", methods=["GET"])
+@auth.login_required
 def get_phone(phone_id):
     return fetch_data_from_table("phone", phone_id)
 
 
 @app.route("/products", methods=["GET"])
+@auth.login_required
 def get_all_products():
     return fetch_data_from_table("product")
 
 
 @app.route("/products/<int:product_id>", methods=["GET"])
+@auth.login_required
 def get_product(product_id):
     return fetch_data_from_table("product", product_id)
 
 
 @app.route("/product_prices", methods=["GET"])
+@auth.login_required
 def get_all_product_prices():
     return fetch_data_from_table("product_price")
 
 
 @app.route("/product_prices/<int:product_price_id>", methods=["GET"])
+@auth.login_required
 def get_product_price(product_price_id):
     return fetch_data_from_table("product_price", product_price_id)
 
 
 @app.route("/payments", methods=["GET"])
+@auth.login_required
 def get_all_payments():
     return fetch_data_from_table("payment")
 
 
 @app.route("/payments/<int:payment_id>", methods=["GET"])
+@auth.login_required
 def get_payment(payment_id):
     return fetch_data_from_table("payment", payment_id)
 
 
 #POST METHODS
-@app.route("/customers", methods=["POST"])
+@app.route("/new_customers", methods=["POST"])
+@auth.login_required
 def add_customer():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -132,10 +161,11 @@ def add_customer():
     print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
 @app.route("/new_atms", methods=["POST"])
+@auth.login_required
 def add_new_atm():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -152,10 +182,11 @@ def add_new_atm():
     print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
 @app.route("/new_phones", methods=["POST"])
+@auth.login_required
 def add_new_phone():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -171,10 +202,11 @@ def add_new_phone():
     print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
 @app.route("/new_products", methods=["POST"])
+@auth.login_required
 def add_new_product():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -191,10 +223,11 @@ def add_new_product():
     print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
 @app.route("/new_product_prices", methods=["POST"])
+@auth.login_required
 def add_new_product_price():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -211,7 +244,7 @@ def add_new_product_price():
     print("row(s) affected: {}".format(cur.rowcount))
     rows_affected = cur.rowcount
     cur.close()
-    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 201)
+    return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
 
@@ -220,6 +253,7 @@ def add_new_product_price():
 
 #PUT METHODS
 @app.route("/update_customers/<int:customer_id>", methods=["PUT"])
+@auth.login_required
 def update_customers(customer_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -242,6 +276,7 @@ def update_customers(customer_id):
         200,
     )
 @app.route("/update_atms", methods=["PUT"])
+@auth.login_required
 def update_atms():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -258,6 +293,7 @@ def update_atms():
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 @app.route("/update_phones", methods=["PUT"])
+@auth.login_required
 def update_phones():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -274,7 +310,8 @@ def update_phones():
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_products", methods=["PUT"])
+@app.route("/update_products", methods=["PUT"])
+@auth.login_required
 def update_products():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -291,7 +328,8 @@ def update_products():
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_product_prices", methods=["PUT"])
+@app.route("/update_product_prices", methods=["PUT"])
+@auth.login_required
 def update_product_price():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -307,7 +345,11 @@ def update_product_price():
     cur.close()
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
+
+
+#DELETE METHODS
 @app.route("/customers/<int:customer_id>", methods=["DELETE"])
+@auth.login_required
 def delete_customer(customer_id):
     cur = mysql.connection.cursor()
 
@@ -323,6 +365,7 @@ def delete_customer(customer_id):
 
 
 @app.route("/products/<int:product_id>", methods=["DELETE"])
+@auth.login_required
 def delete_product(product_id):
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM product WHERE product_id = %s", (product_id,))
@@ -340,7 +383,6 @@ def get_params():
     form = request.args.get("id")
     foo =  request.args.get('aaaa')
     return make_response(jsonify({"format":form, "foo": foo}))
-
 
 if __name__ == "__main__":
     app.run(debug=True)
