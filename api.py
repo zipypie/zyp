@@ -241,10 +241,8 @@ def update_customers(customer_id):
         ),
         200,
     )
-
-
-@app.route("/new_atms", methods=["PUT"])
-def add_new_atm():
+@app.route("/update_atms", methods=["PUT"])
+def update_atms():
     cur = mysql.connection.cursor()
     info = request.get_json()
     atm_number = info["atm_number"]
@@ -259,9 +257,8 @@ def add_new_atm():
     cur.close()
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
-
-@app.route("/new_phones", methods=["PUT"])
-def add_new_phone():
+@app.route("/update_phones", methods=["PUT"])
+def update_phones():
     cur = mysql.connection.cursor()
     info = request.get_json()
     smartphone_number = info["smartphone_number"]
@@ -278,7 +275,7 @@ def add_new_phone():
 
 
 @app.route("/new_products", methods=["PUT"])
-def add_new_product():
+def update_products():
     cur = mysql.connection.cursor()
     info = request.get_json()
     product_id = info["product_id"]
@@ -295,7 +292,7 @@ def add_new_product():
 
 
 @app.route("/new_product_prices", methods=["PUT"])
-def add_new_product_price():
+def update_product_price():
     cur = mysql.connection.cursor()
     info = request.get_json()
     product_id = info["product_id"]
@@ -310,15 +307,19 @@ def add_new_product_price():
     cur.close()
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
-
 @app.route("/customers/<int:customer_id>", methods=["DELETE"])
 def delete_customer(customer_id):
     cur = mysql.connection.cursor()
+
+    cur.execute("DELETE FROM atm WHERE customer_id = %s", (customer_id,))
+    cur.execute("DELETE FROM phone WHERE customer_id = %s", (customer_id,))
     cur.execute("DELETE FROM customer WHERE customer_id = %s", (customer_id,))
+    cur.execute("DELETE FROM payment WHERE customer_id = %s", (customer_id,))
     mysql.connection.commit()
     rows_affected = cur.rowcount
     cur.close()
     return make_response(jsonify({"message": "deleted successfully", "rows_affected": rows_affected}), 200)
+
 
 
 if __name__ == "__main__":
