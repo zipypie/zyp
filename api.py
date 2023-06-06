@@ -322,5 +322,25 @@ def delete_customer(customer_id):
 
 
 
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_product(product_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM product WHERE product_id = %s", (product_id,))
+    cur.execute("DELETE FROM product_price WHERE product_id = %s", (product_id,))
+
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(jsonify({"message": "deleted successfully", "rows_affected": rows_affected}), 200)
+
+
+
+@app.route("/customers/format", methods = ["GET"])
+def get_params():
+    form = request.args.get("id")
+    foo =  request.args.get('aaaa')
+    return make_response(jsonify({"format":form, "foo": foo}))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
