@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
-auth = HTTPBasicAuth()
+
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -14,6 +14,11 @@ app.config["MYSQL_CURSOSCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
+#to authenticate using Basic Authentication
+auth = HTTPBasicAuth()
+
+
+#Sample data for authentication
 @auth.verify_password
 def verify(username, password):
     # Example hardcoded username and password for demonstration purposes
@@ -143,6 +148,81 @@ def get_payment(payment_id):
     return fetch_data_from_table("payment", payment_id)
 
 
+@app.route("/customer_phones", methods=["GET"])
+@auth.login_required
+def get_customer_phones():
+    query = """
+    SELECT customer.first_name, customer.last_name, customer.customer_address, phone.phone_number, atm.atm_number
+    FROM phone
+    INNER JOIN customer ON phone.customer_id = customer.customer_id
+    INNER JOIN atm ON atm.customer_id = customer.customer_id
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    columns = [desc[0] for desc in cur.description]  # Get column names
+    data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
+    cur.close()
+
+    format = request.args.get("format", "").lower()
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("customer_phones")
+        for row in data:
+            customer = ET.SubElement(root, "customer")
+            for key, value in row.items():
+                field = ET.SubElement(customer, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+    
+
+@app.route("/product_product_prices", methods=["GET"])
+@auth.login_required
+def get_product_product_prices():
+    query = """
+    SELECT product.product_name, product.quantity, product_price.product_price
+    FROM product
+    INNER JOIN product_price ON product_price.product_id = product.product_id
+    """
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    columns = [desc[0] for desc in cur.description]  # Get column names
+    data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
+    cur.close()
+
+    format = request.args.get("format", "").lower()
+    if format == "xml":
+        # Convert data to XML format
+        root = ET.Element("customer_phones")
+        for row in data:
+            customer = ET.SubElement(root, "customer")
+            for key, value in row.items():
+                field = ET.SubElement(customer, key)
+                field.text = str(value)
+
+        # Convert XML to string
+        xml_data = ET.tostring(root, encoding="utf-8")
+
+        # Set the Content-Type header to indicate XML format
+        headers = {"Content-Type": "application/xml"}
+
+        # Return the XML response
+        return make_response(xml_data, 200, headers)
+    else:
+        # Return the JSON response
+        return make_response(jsonify(data), 200)
+    
+    
 #POST METHODS
 @app.route("/new_customers", methods=["POST"])
 @auth.login_required
@@ -383,6 +463,44 @@ def get_params():
     form = request.args.get("id")
     foo =  request.args.get('aaaa')
     return make_response(jsonify({"format":form, "foo": foo}))
+
+
+
+
+#TO SEARCH USING NAMES OR VALUES
+@app.route("/search/customers", methods=["GET"])
+@auth.login_required
+def search_customers():
+    query = request.args.get("query")
+
+    # Execute a SQL query to search for customers based on the query parameter
+    cur = mysql.connection.cursor()
+    sql = "SELECT * FROM customer WHERE first_name LIKE %s OR last_name LIKE %s"
+    cur.execute(sql, (f"%{query}%", f"%{query}%"))
+
+    columns = [desc[0] for desc in cur.description]  # Get column names
+    data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
+    cur.close()
+
+    return make_response(jsonify(data), 200)
+
+
+@app.route("/search/products", methods=["GET"])
+@auth.login_required
+def search_product():
+    query = request.args.get("query")
+
+    # Execute a SQL query to search for products based on the query parameter
+    cur = mysql.connection.cursor()
+    sql = "SELECT * FROM product WHERE product_name LIKE %s"
+    cur.execute(sql, (f"%{query}%",))
+
+    columns = [desc[0] for desc in cur.description]  # Get column names
+    data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
+    cur.close()
+
+    return make_response(jsonify(data), 200)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
