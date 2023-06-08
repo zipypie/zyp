@@ -46,9 +46,9 @@ def fetch_data_from_table(table_name, primary_key=None):
         cur.execute(query)
         
     else:
-        key_column = f"{table_name}_id"  # Get the custom key column name based on table_name
+        key_column = f"{table_name}_id" 
         query = f"SELECT * FROM {table_name} WHERE {key_column} = %s"
-        cur.execute(query, (primary_key,))  # Pass primary key as a tuple
+        cur.execute(query, (primary_key,))  
 
     columns = [desc[0] for desc in cur.description]  # Get column names
     data = [dict(zip(columns, row)) for row in cur.fetchall()]  # Convert rows to dictionaries
@@ -355,7 +355,7 @@ def update_customers(customer_id):
         ),
         200,
     )
-@app.route("/atms", methods=["PUT"])
+@app.route("/atms/<int:atm_id>", methods=["PUT"])
 @auth.login_required
 def update_atms(atm_id):
     cur = mysql.connection.cursor()
@@ -364,7 +364,7 @@ def update_atms(atm_id):
     customer_id = info["customer_id"]
 
     cur.execute(
-        """UPDATE atm SET atm_name = %s WHERE atm_id = %s""",
+        """UPDATE atm SET atm_number = %s, customer_id = %s WHERE atm_id = %s""",
         (atm_number, customer_id,atm_id),
     )
     mysql.connection.commit()
@@ -372,7 +372,7 @@ def update_atms(atm_id):
     cur.close()
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
-@app.route("/phones", methods=["PUT"])
+@app.route("/phones/<int:phone_id>", methods=["PUT"])
 @auth.login_required
 def update_phones(phone_id):
     cur = mysql.connection.cursor()
@@ -381,7 +381,7 @@ def update_phones(phone_id):
     customer_id = info["customer_id"]
 
     cur.execute(
-        """UPDATE phone SET phone_number = %s WHERE phone_id = %s""",
+        """UPDATE phone SET phone_number = %s, customer_id = %s WHERE phone_id = %s""",
         (phone_number, customer_id, phone_id),
     )
     mysql.connection.commit()
@@ -390,17 +390,17 @@ def update_phones(phone_id):
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/products", methods=["PUT"])
+@app.route("/products/<int:product_id>", methods=["PUT"])
 @auth.login_required
 def update_products(product_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    product_name = info["product_id"]
-    product_quantity = info["product_quantity"]
+    product_name = info["product_name"]
+    quantity = info["quantity"]
 
     cur.execute(
-        """UPDATE product SET product_quantity = %s WHERE product_id = %s""",
-        (product_quantity, product_name, product_id),
+        """UPDATE product SET product_name = %s, quantity = %s WHERE product_id = %s""",
+        ( product_name, quantity, product_id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
@@ -408,7 +408,7 @@ def update_products(product_id):
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/product_prices", methods=["PUT"])
+@app.route("/product_prices/<int:product_price_id>", methods=["PUT"])
 @auth.login_required
 def update_product_price(product_price_id):
     cur = mysql.connection.cursor()
@@ -417,7 +417,7 @@ def update_product_price(product_price_id):
     product_price = info["product_price"]
 
     cur.execute(
-        """UPDATE product_price SET product_price = %s WHERE product_price_id = %s""",
+        """UPDATE product_price SET product_price = %s, product_price = %s WHERE product_price_id = %s""",
         (product_price, product_id, product_price_id),
     )
     mysql.connection.commit()
