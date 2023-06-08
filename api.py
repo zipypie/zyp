@@ -224,7 +224,7 @@ def get_product_product_prices():
     
     
 #POST METHODS
-@app.route("/new_customers", methods=["POST"])
+@app.route("/customers", methods=["POST"])
 @auth.login_required
 def add_customer():
     cur = mysql.connection.cursor()
@@ -244,9 +244,9 @@ def add_customer():
     return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_atms", methods=["POST"])
+@app.route("/atms", methods=["POST"])
 @auth.login_required
-def add_new_atm():
+def add_atm():
     cur = mysql.connection.cursor()
     info = request.get_json()
     atm_number = info["atm_number"]
@@ -265,18 +265,18 @@ def add_new_atm():
     return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_phones", methods=["POST"])
+@app.route("/phones", methods=["POST"])
 @auth.login_required
-def add_new_phone():
+def add_phone():
     cur = mysql.connection.cursor()
     info = request.get_json()
-    smartphone_number = info["smartphone_number"]
+    phone_number = info["phone_number"]
     customer_id = info["customer_id"]
 
     cur.execute(
-        """INSERT INTO phone (smartphone_number, customer_id) 
+        """INSERT INTO phone (phone_number, customer_id) 
         VALUES (%s, %s)""",
-        (smartphone_number, customer_id),
+        (phone_number, customer_id),
     )
     mysql.connection.commit()
     print("row(s) affected: {}".format(cur.rowcount))
@@ -285,9 +285,9 @@ def add_new_phone():
     return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_products", methods=["POST"])
+@app.route("/products", methods=["POST"])
 @auth.login_required
-def add_new_product():
+def add_product():
     cur = mysql.connection.cursor()
     info = request.get_json()
     product_name = info["product_name"]
@@ -306,9 +306,9 @@ def add_new_product():
     return make_response(jsonify({"message": "added successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/new_product_prices", methods=["POST"])
+@app.route("/product_prices", methods=["POST"])
 @auth.login_required
-def add_new_product_price():
+def add_product_price():
     cur = mysql.connection.cursor()
     info = request.get_json()
     product_id = info["product_id"]
@@ -332,7 +332,7 @@ def add_new_product_price():
 
 
 #PUT METHODS
-@app.route("/update_customers/<int:customer_id>", methods=["PUT"])
+@app.route("/customers/<int:customer_id>", methods=["PUT"])
 @auth.login_required
 def update_customers(customer_id):
     cur = mysql.connection.cursor()
@@ -355,34 +355,34 @@ def update_customers(customer_id):
         ),
         200,
     )
-@app.route("/update_atms", methods=["PUT"])
+@app.route("/atms", methods=["PUT"])
 @auth.login_required
-def update_atms():
+def update_atms(atm_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
     atm_number = info["atm_number"]
     customer_id = info["customer_id"]
 
     cur.execute(
-        """UPDATE atm SET atm_name = %s WHERE customer_id = %s""",
-        (atm_number, customer_id),
+        """UPDATE atm SET atm_name = %s WHERE atm_id = %s""",
+        (atm_number, customer_id,atm_id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
     cur.close()
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
-@app.route("/update_phones", methods=["PUT"])
+@app.route("/phones", methods=["PUT"])
 @auth.login_required
-def update_phones():
+def update_phones(phone_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    smartphone_number = info["smartphone_number"]
+    phone_number = info["phone_number"]
     customer_id = info["customer_id"]
 
     cur.execute(
-        """UPDATE phone SET smartphone_number = %s WHERE customer_id = %s""",
-        (smartphone_number, customer_id),
+        """UPDATE phone SET phone_number = %s WHERE phone_id = %s""",
+        (phone_number, customer_id, phone_id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
@@ -390,17 +390,17 @@ def update_phones():
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/update_products", methods=["PUT"])
+@app.route("/products", methods=["PUT"])
 @auth.login_required
-def update_products():
+def update_products(product_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    product_id = info["product_id"]
+    product_name = info["product_id"]
     product_quantity = info["product_quantity"]
 
     cur.execute(
         """UPDATE product SET product_quantity = %s WHERE product_id = %s""",
-        (product_quantity, product_id),
+        (product_quantity, product_name, product_id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
@@ -408,17 +408,17 @@ def update_products():
     return make_response(jsonify({"message": "updated successfully", "rows_affected": rows_affected}), 200)
 
 
-@app.route("/update_product_prices", methods=["PUT"])
+@app.route("/product_prices", methods=["PUT"])
 @auth.login_required
-def update_product_price():
+def update_product_price(product_price_id):
     cur = mysql.connection.cursor()
     info = request.get_json()
     product_id = info["product_id"]
     product_price = info["product_price"]
 
     cur.execute(
-        """UPDATE product_price SET product_price = %s WHERE product_id = %s""",
-        (product_price, product_id),
+        """UPDATE product_price SET product_price = %s WHERE product_price_id = %s""",
+        (product_price, product_id, product_price_id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
